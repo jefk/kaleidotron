@@ -16,7 +16,7 @@ class Kaleidotron
     @context.clearRect(-1*@canvas.width, -1*@canvas.height, 2*@canvas.width, 2*@canvas.height)
     @context.beginPath()
 
-    points = 200
+    points = 100
     for i in [0..points]
       endi = i * factor % points
       start = new Polar(@radius(), (i/points) * (2*Math.PI))
