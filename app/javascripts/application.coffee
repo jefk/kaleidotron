@@ -12,18 +12,20 @@ class Kaleidotron
     @context = @canvas.getContext '2d'
     @context.translate @canvas.width/2, @canvas.height/2
 
+  tau: 2*Math.PI
+
   go: (factor) ->
     @context.clearRect(-1*@canvas.width, -1*@canvas.height, 2*@canvas.width, 2*@canvas.height)
     @context.beginPath()
 
-    points = 100
-    for i in [0..points]
+    points = 144
+    for i in [1..points]
       endi = i * factor % points
-      start = new Polar(@radius(), (i/points) * (2*Math.PI))
-      end = new Polar(@radius(), (endi/points) * (2*Math.PI))
+      start = new Polar(@radius(), (i/points) * @tau)
+      end = new Polar(@radius(), (endi/points) * @tau)
 
       @context.moveTo start.x(), start.y()
-      @context.lineTo end.x(), end.y()
+      @context.lineTo 3*end.x(), 3*end.y()
 
     @context.stroke()
 
@@ -31,7 +33,9 @@ class Kaleidotron
     @_radius ||= Math.floor(0.9 * Math.min(@canvas.width, @canvas.height) / 2)
 
 
-this.draw = ->
+draw = (factor = 0) ->
+  # document.body.style.height = "10000px"
+
   canvas = document.getElementById 'prismatron'
   return unless canvas.getContext
 
@@ -41,28 +45,30 @@ this.draw = ->
   k = new Kaleidotron(canvas)
   indicator = document.getElementById 'indicator'
 
-  @factor = 1
+  indicator.textContent = Math.ceil(factor * 100) / 100
+  k.go factor
 
-  iterate = ->
-    indicator.textContent = Math.ceil(@factor * 100) / 100
-    k.go @factor
-    @factor = @factor + 0.01
+throttle = (type, name, obj) ->
+  obj = obj || window
+  running = false
+  func = ->
+    return if running
+    running = true
+    requestAnimationFrame ->
+      obj.dispatchEvent(new CustomEvent(name))
+      running = false
 
-  setInterval iterate, 10
+  obj.addEventListener(type, func)
 
-# throttle = (type, name, obj) ->
-#   obj = obj || window
-#   running = false
-#   func = ->
-#     return if running
-#     running = true
-#     requestAnimationFrame ->
-#       obj.dispatchEvent(new CustomEvent(name))
-#       running = false
+throttle "scroll", "optimizedScroll"
 
-#   obj.addEventListener(type, func)
+scrollListener = ->
+  dist = document.body.scrollTop
+  pageHeight = parseInt document.body.style.height
+  if not pageHeight or pageHeight - dist < 10000
+    document.body.style.height = pageHeight + 10000 + "px"
 
-# throttle "scroll", "optimizedScroll"
+  draw(document.body.scrollTop/1000)
 
-# window.addEventListener "optimizedScroll", ->
-#   console.log("Resource conscious scroll callback!")
+window.addEventListener "optimizedScroll", scrollListener
+window.onload = scrollListener

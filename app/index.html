@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>SimpleApp</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kaleidotron</title>
 
   <!-- build:css stylesheets/application.css -->
     <link rel="stylesheet" href="stylesheets/application.css">
@@ -12,8 +13,8 @@
     <script type="text/javascript" src="javascripts/application.js"></script>
   <!-- endbuild -->
 </head>
-<body onload="draw()" style="margin:0">
+<body style="margin:0; height:100px">
   <p id="indicator" style="position:fixed; top:20px; right:20px; margin:0"></p>
-  <canvas id="prismatron" width="100" height="100"></canvas>
+  <canvas id="prismatron" width="100" height="100" style="position:fixed"></canvas>
 </body>
 </html>
