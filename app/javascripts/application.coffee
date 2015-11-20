@@ -13,7 +13,8 @@ class Kaleidotron
     @context.translate @canvas.width/2, @canvas.height/2
 
   go: (factor) ->
-    @context.beginPath();
+    @context.clearRect(-1*@canvas.width, -1*@canvas.height, 2*@canvas.width, 2*@canvas.height)
+    @context.beginPath()
 
     points = 200
     for i in [0..points]
@@ -24,7 +25,7 @@ class Kaleidotron
       @context.moveTo start.x(), start.y()
       @context.lineTo end.x(), end.y()
 
-    @context.stroke();
+    @context.stroke()
 
   radius: ->
     @_radius ||= Math.floor(0.9 * Math.min(@canvas.width, @canvas.height) / 2)
@@ -37,10 +38,17 @@ this.draw = ->
   canvas.width = window.innerWidth
   canvas.height = window.innerHeight
 
-  k = new Kaleidotron(canvas, )
-  k.go(3)
+  k = new Kaleidotron(canvas)
+  indicator = document.getElementById 'indicator'
 
+  @factor = 1
 
+  iterate = ->
+    indicator.textContent = Math.ceil(@factor * 100) / 100
+    k.go @factor
+    @factor = @factor + 0.01
+
+  setInterval iterate, 10
 
 # throttle = (type, name, obj) ->
 #   obj = obj || window
