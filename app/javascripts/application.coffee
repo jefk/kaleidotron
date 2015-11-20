@@ -9,19 +9,25 @@ class Polar
 
 class Kaleidotron
   constructor: (@canvas) ->
-    @context ||= @canvas.getContext '2d'
-
-  go: ->
+    @context = @canvas.getContext '2d'
     @context.translate @canvas.width/2, @canvas.height/2
-    @context.beginPath();
-    # @context.arc(0,0,200,0,Math.PI*2,true);
 
-    for i in [0...1] by (1/100)
-      p = new Polar(200, i * (2*Math.PI))
-      @context.moveTo 200, 0
-      @context.lineTo p.x(), p.y()
+  go: (factor) ->
+    @context.beginPath();
+
+    points = 200
+    for i in [0..points]
+      endi = i * factor % points
+      start = new Polar(@radius(), (i/points) * (2*Math.PI))
+      end = new Polar(@radius(), (endi/points) * (2*Math.PI))
+
+      @context.moveTo start.x(), start.y()
+      @context.lineTo end.x(), end.y()
 
     @context.stroke();
+
+  radius: ->
+    @_radius ||= Math.floor(0.9 * Math.min(@canvas.width, @canvas.height) / 2)
 
 
 this.draw = ->
@@ -31,5 +37,24 @@ this.draw = ->
   canvas.width = window.innerWidth
   canvas.height = window.innerHeight
 
-  k = new Kaleidotron(canvas)
-  k.go()
+  k = new Kaleidotron(canvas, )
+  k.go(3)
+
+
+
+# throttle = (type, name, obj) ->
+#   obj = obj || window
+#   running = false
+#   func = ->
+#     return if running
+#     running = true
+#     requestAnimationFrame ->
+#       obj.dispatchEvent(new CustomEvent(name))
+#       running = false
+
+#   obj.addEventListener(type, func)
+
+# throttle "scroll", "optimizedScroll"
+
+# window.addEventListener "optimizedScroll", ->
+#   console.log("Resource conscious scroll callback!")
